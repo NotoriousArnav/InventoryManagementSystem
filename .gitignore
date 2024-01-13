@@ -3,3 +3,5 @@ env/
 *.pyc
 __pycache__/
 instance/
+attachments/
+db.sqlite3
