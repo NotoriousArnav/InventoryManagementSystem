@@ -38,7 +38,7 @@ class Product(models.Model):
     category = models.ManyToManyField(Category)
     price = models.FloatField(default=100)
     qty = models.IntegerField(default=1)
-    slug = models.SlugField(null=True, unique=True)
+    slug = models.SlugField(max_length=200, null=True, unique=True)
 
     def total_stock(self):
         return f"Rs. {self.qty*self.price}"
@@ -47,7 +47,7 @@ class Product(models.Model):
         return reverse("product", kwargs={"slug": self.slug})
 
     def __str__(self):
-        return f"{self.name}:{self.qty}"
+        return f"{self.name}:{self.qty}:{str(self.id)[:5]}"
 
     def attachments(self):
         return self.productattachment_set.count()
