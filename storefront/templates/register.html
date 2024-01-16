@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% block content %}
+<section class="min-h-screen flex items-center justify-center">
+  <div class="bg-white shadow-md p-8 rounded-md">
+  <h2 class="mb-3 text-2xl">User Registration</h2>
+  <div class="container">
+    <form method="post" action="{% url 'storefront:register' %}">
+      {% csrf_token %}
+      <div class="gap-4 mb-4">
+        <div class="mb-3">
+          {{ form.first_name|as_crispy_field }}
+        </div>
+        <div class="mb-3">
+          {{ form.last_name|as_crispy_field }}
+        </div>
+        <div class="mb-3">
+          {{ form.username|as_crispy_field }}
+        </div>
+        <div class="mb-3 flex space-x-4">
+          {{ form.phone_number_cc|as_crispy_field }}
+          {{ form.phone_number|as_crispy_field }}
+        </div>
+        <div class="mb-3">
+          {{ form.email|as_crispy_field }}
+        </div>
+        <div class="mb-3">
+          {{ form.password1|as_crispy_field }}
+        </div>
+        <div class="mb-3">
+          {{ form.password2|as_crispy_field }}
+        </div>
+      </div>
+      <button type="submit" class="bg-red-600 hover:bg-red-800 p-2 rounded transition text-white">Register</button>
+    </form>
+  </div>
+  </div>
+</section>
+{% endblock %}
+

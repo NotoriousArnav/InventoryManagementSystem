@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% block content %}
+  <section class="min-h-screen flex items-center justify-center">
+    <div class="bg-white shadow-md p-8 rounded-md">
+      <h2 class="text-2xl font-semibold mb-6">User Login</h2>
+      <form method="post" action="{% url 'storefront:login' %}" class="grid grid-cols-1 gap-4">
+        {% csrf_token %}
+        <div class="mb-3">
+          {{ form.username_or_email_or_phone|as_crispy_field }}
+        </div>
+        <div class="mb-3">
+          {{ form.password|as_crispy_field }}
+        </div>
+        <button type="submit" class="bg-red-600 hover:bg-red-800 transition text-white py-2 px-4 rounded">Login</button>
+      </form>
+    </div>
+  </section>
+{% endblock %}
+

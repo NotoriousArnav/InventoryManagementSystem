@@ -21,14 +21,14 @@ class InvoiceView(admin.ModelAdmin):
 class InvoiceItemInline(admin.TabularInline):
     model = InvoiceItem
     extra = 1
+    readonly_fields = ['subtotal']
 
 class CustomInvoiceAdmin(admin.ModelAdmin):
     inlines = [InvoiceItemInline]
 
-    list_display = ('customer', 'invoice_date', 'coupon', 'total_amount', 'final_amount', 'calculated_discount')
+    list_display = ('customer', 'invoice_date', 'coupon', 'total_amount', 'final_amount', 'calculated_discount', 'transaction_status')
     actions = ['export_to_pdf']
 
-    
     def export_to_pdf(modeladmin, request, queryset):
     # Create a PDF document
         response = HttpResponse(content_type='application/pdf')
@@ -39,39 +39,51 @@ class CustomInvoiceAdmin(admin.ModelAdmin):
 
     # Loop through each selected invoice and add its data to the PDF
         for invoice in queryset:
-            data = []
-            data.append(["Invoice ID", str(invoice.id)])
-            data.append(["Customer", str(invoice.customer.user.first_name+' '+invoice.customer.user.last_name)])
-            data.append(["Customer Phone", str(invoice.customer.phone_number)])
-            data.append(["Invoice Date", str(invoice.invoice_date)])
-            data.append(["Total Amount", str(invoice.total_amount())])
-            data.append(["Discounted Amount", str(invoice.final_amount())])
+        # Table for Invoice Header
+            header_data = [
+                ["Invoice ID", str(invoice.id)],
+                ["Customer", str(invoice.customer.user.first_name + ' ' + invoice.customer.user.last_name)],
+                ["Customer Phone", str(invoice.customer.phone_number)],
+                ["Invoice Date", str(invoice.invoice_date)],
+                ["Total Amount", str(invoice.total_amount())],
+                ["Discounted Amount", str(invoice.final_amount())],
+            ]
 
-        # Add more fields as needed
+            header_table = Table(header_data, colWidths='100%')
+            header_style = TableStyle([
+                ('BACKGROUND', (0, 0), (-1, 0), '#77a7c2'),
+                ('TEXTCOLOR', (0, 0), (-1, 0), (1, 1, 1)),
+                ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+                ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+                ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+                ('BACKGROUND', (0, 1), (-1, -1), '#f5f5f5'),
+                ('GRID', (0, 0), (-1, -1), 1, '#a5a5a5')
+            ])
+            header_table.setStyle(header_style)
 
-        # Add a header row for Invoice Items
-        data.append(["Product", "Quantity", "Subtotal"])
+        # Table for Invoice Items
+            item_data = [
+                ["Product", "Quantity", "Subtotal"]
+            ]
+            for item in invoice.invoiceitem_set.all():
+                item_data.append([item.product.name, item.quantity, item.subtotal()])
 
-        # Add rows for each InvoiceItem
-        for item in invoice.invoiceitem_set.all():
-            data.append([item.product.name, item.quantity, item.subtotal()])
+            item_table = Table(item_data, colWidths='100%')
+            item_style = TableStyle([
+                ('BACKGROUND', (0, 0), (-1, 0), '#77a7c2'),
+                ('TEXTCOLOR', (0, 0), (-1, 0), (1, 1, 1)),
+                ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+                ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+                ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+                ('BACKGROUND', (0, 1), (-1, -1), '#f5f5f5'),
+                ('GRID', (0, 0), (-1, -1), 1, '#a5a5a5')
+            ])
+            item_table.setStyle(item_style)
 
-        # Create a Table object
-        table = Table(data)
-
-        # Apply style to the table
-        style = TableStyle([('BACKGROUND', (0, 0), (-1, 0), '#77a7c2'),
-                            ('TEXTCOLOR', (0, 0), (-1, 0), (1, 1, 1)),
-                            ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
-                            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-                            ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
-                            ('BACKGROUND', (0, 1), (-1, -1), '#f5f5f5'),
-                            ('GRID', (0, 0), (-1, -1), 1, '#a5a5a5')])
-
-        table.setStyle(style)
-
-        elements.append(table)
-        elements.append(canvas.Canvas(response).showPage())  # Start a new page for each invoice
+        # Add both tables to the elements list
+            elements.append(header_table)
+            elements.append(item_table)
+            elements.append(canvas.Canvas(response).showPage())  # Start a new page for each invoice
 
         doc.build(elements)
 

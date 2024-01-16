@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import User
+from django.db.models.signals import post_save
 from inventory.models import Product
 import uuid
 
@@ -53,6 +54,9 @@ class Invoice(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.SET_NULL, null=True)
     invoice_date = models.DateTimeField(default=timezone.now)
     coupon = models.ForeignKey(Coupon, on_delete=models.SET_NULL, null=True, blank=True)
+    transaction_status = models.BooleanField(
+                default=False
+            )
 
     def final_amount(self):
         total = sum(item.subtotal() for item in self.invoiceitem_set.all())
@@ -68,6 +72,21 @@ class Invoice(models.Model):
             return total_amount * (self.coupon.discount_percentage / 100)
         return 0.0
 
+    def save(self, *args, **kwargs):
+        # Check if transaction_status has changed to True
+        if self.transaction_status and not self._state.adding:
+            # Iterate over invoice items and update product quantities
+            for item in self.invoiceitem_set.all():
+                product = item.product
+                new_qty = product.qty - item.quantity
+                if new_qty < 0:
+                    raise ValueError(f"Not enough stock for product: {product.name}")
+                product.qty = new_qty
+                product.save()
+
+        # Save the invoice
+        super().save(*args, **kwargs)
+
     def __str__(self):
         return f"Invoice-{str(self.id)[:5]} ({self.customer.user.first_name if self.customer else 'No Customer'})"
 
@@ -82,3 +101,4 @@ class InvoiceItem(models.Model):
 
     def subtotal(self):
         return self.product.price * self.quantity
+
