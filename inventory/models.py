@@ -49,6 +49,9 @@ class Product(models.Model):
     def __str__(self):
         return f"{self.name}:{self.qty}"
 
+    def attachments(self):
+        return self.productattachment_set.count()
+
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = slugify(self.name, self.id)
@@ -76,10 +79,10 @@ class ProductAttachment(models.Model):
             # Resize the image using Pillow
             img = Image.open(self.file)
             img = img.resize((500, 500), Image.LANCZOS)  # Adjust dimensions as needed
-            img.save('media/attachments/'+self.file.path)
+            img.save('media/attachments/'+str(self.id)+'.jpg')
 
             # Rename the file using the model instance's ID
-            self.file_name = f"{self.id}.{self.file.name.split('.')[-1]}"
+            self.file_name = f"{self.id}.{self.file.name}"
 
         super().save(*args, **kwargs)
 
