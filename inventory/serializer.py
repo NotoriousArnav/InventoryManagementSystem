@@ -15,7 +15,7 @@ class ProductSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Product
-        fields = ('id', 'name', 'description', 'category', 'price', 'qty', 'total_count', 'attachments')
+        fields = ('id', 'name', 'description', 'category', 'price', 'qty', 'total_count', 'attachments', 'slug')
 
     def get_attachments(self, obj):
         return ProductAttachmentSerializer(obj.productattachment_set.all(), many=True).data

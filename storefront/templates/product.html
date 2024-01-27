@@ -1,0 +1,173 @@
+{% extends 'base.html' %}
+{% block title %}
+{{ product.name }}
+{% endblock %}
+{% block head %}
+<script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.umd.js"></script>
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.css"
+/>
+{% endblock %}
+{% block content %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Swiper/11.0.5/swiper-bundle.min.js" integrity="sha512-Ysw1DcK1P+uYLqprEAzNQJP+J4hTx4t/3X2nbVwszao8wD+9afLjBQYjz7Uk4ADP+Er++mJoScI42ueGtQOzEA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<div class="grid lg:grid-cols-2 gap-6 lg:gap-12 items-start max-w-6xl px-4 mx-auto py-6" x-data="" x-init="">
+  <div class="grid md:grid-cols-5 gap-3 items-start">
+    <div data-fancybox="product" href="/media/{{ fa.file }}" class="md:col-span-4">
+      <img
+          src="/media/{{ fa.file }}"
+          alt="{{ fa.file_name }}"
+        width="600"
+        height="900"
+        class="aspect-[2/3] object-cover border border-gray-200 w-full rounded-lg overflow-hidden dark:border-gray-800"
+      />
+    </div>
+    <div class="hidden md:flex flex-col gap-3 items-start">
+      {% if attachments|length > 1 %}
+      {% for x in attachments %}
+      <a data-fancybox="product" href="/media/{{ x.file }}"  class="border hover:border-gray-900 rounded-lg overflow-hidden transition-colors dark:hover:border-gray-50">
+        <img
+            src="/media/{{ x.file }}"
+            alt="{{ x.file_name }}"
+          width="100"
+          height="120"
+          class="aspect-[5/6] object-cover"
+        />
+        <span class="sr-only">{{ x.file_name }}</span>
+      </a>
+      {% endfor %}
+      {% endif %}
+    </div>
+  </div>
+  <script>
+    Fancybox.bind("[data-fancybox]", {
+  // Your custom options
+});
+  </script>
+  <div class="grid gap-4 md:gap-10 items-start">
+    <div class="grid gap-4">
+      <h1 class="font-bold text-3xl lg:text-4xl" x-text="">{{ product.name }}</h1>
+      <div class="flex items-center gap-4">
+        <div class="flex items-center gap-0.5">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="w-5 h-5 fill-primary"
+          >
+            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+          </svg>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="w-5 h-5 fill-primary"
+          >
+            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+          </svg>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="w-5 h-5 fill-primary"
+          >
+            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+          </svg>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="w-5 h-5 fill-muted stroke-muted-foreground"
+          >
+            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+          </svg>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="w-5 h-5 fill-muted stroke-muted-foreground"
+          >
+            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+          </svg>
+        </div>
+        <div class="text-4xl font-bold ml-auto" x-text="">Rs. {{ product.price }}</div>
+      </div>
+    </div>
+    <form class="grid grid-cols-2 gap-4 md:gap-10">
+      <button class="inline-flex items-center justify-center whitespace-nowrap font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-red-400 text-primary-foreground hover:bg-red-500 h-11 rounded-md px-8">
+        <i class="fa-solid fa-cart-shopping"></i>
+        &nbsp;
+        Add to cart
+      </button>
+      <style>
+        .wa-btn {
+          background: #0BC44B;
+        }
+        .wa-btn:hover {
+          background: #075E54;
+          color: white;
+        }
+      </style>
+      <button class="inline-flex items-center justify-center whitespace-nowrap font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 text-primary-foreground h-11 rounded-md px-8 wa-btn">
+        <i class="fa-brands fa-whatsapp"></i>
+        &nbsp;
+        Contact Seller
+      </button>
+      <button class="inline-flex items-center justify-center whitespace-nowrap font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-teal-300 text-primary-foreground hover:bg-teal-400 h-11 rounded-md px-8">
+        <i class="fa-solid fa-bag-shopping"></i>
+        &nbsp;
+        Buy Now
+      </button>
+      <button class="inline-flex items-center justify-center whitespace-nowrap font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-pink-300 text-primary-foreground hover:bg-pink-400 h-11 rounded-md px-8">
+        <i class="fa-solid fa-share"></i>
+        &nbsp;
+        Refer a Friend
+      </button>
+    </form>
+    <div class="grid gap-4">
+      <h2 class="font-bold text-2xl">Product Details</h2>
+      <p x-text="">
+        {{ product.description }}
+      </p>
+    </div>
+    <div class="grid gap-4">
+      <h2 class="font-bold text-2xl">Customer Reviews</h2>
+      <div class="grid gap-2">
+        <p>No reviews for this Product yet</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

@@ -7,4 +7,5 @@ urlpatterns = [
     path('products/', ProductList.as_view(), name='product_list'),
     # ... other product URLs ...
     path('product_attachments/', ProductAttachmentList.as_view(), name='attachment_list'),
+    path('products/<slug:slug>/', product_detail, name='product_detail'),
 ]

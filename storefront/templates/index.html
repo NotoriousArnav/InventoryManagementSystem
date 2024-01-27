@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<script src="//unpkg.com/alpinejs" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.6.5/axios.min.js" integrity="sha512-TjBzDQIDnc6pWyeM1bhMnDxtWH0QpOXMcVooglXrali/Tj7W569/wd4E8EDjk1CwOAOPSJon1VfcEt1BI4xIrA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <div x-data="{ products: [] }" x-init="loadProducts">
+<br><br>
+    <strong class="text-4xl font-bold mb-4">Welcome to Our Store</strong>
+
+    <!-- Product Listing -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+      <template x-for="product in products" :key="product.id">
+        <a :href="'/p/'+product.slug" class=" group bg-white p-4 rounded shadow-md">
+          <img :src="product.attachments[0].file" alt="Product Image" class="mb-4">
+          <h3 class="text-xl font-semibold" x-text="product.name"></h3>
+          <p class="text-gray-600" x-text="truncate(product.description, 100)"></p>
+          <p class="mt-2 text-lg text-blue-500 font-bold" x-text="'Rs. ' + product.price"></p>
+          <button class="group-hover:block hidden mt-4 bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-700">Add to Cart</button>
+        </a>
+      </template>
+    </div>
+
+    <script>
+      function loadProducts() {
+        axios.get('/inventory/products/')
+          .then(response => {
+            this.products = response.data;
+          })
+          .catch(error => {
+            console.error('Error loading products:', error);
+          });
+      }
+      function truncate(text, length) {
+        return text.length > length ? text.slice(0, length) + '...' : text;
+      }
+    </script>
+
+  </div>
+{% endblock %}

@@ -7,6 +7,18 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import login, authenticate
 from .forms import UserRegistrationForm
 from customer_relations.models import Customer
+from inventory.models import *
+from inventory.serializer import *
+import json
+
+def home(request):
+    return render(request, 'index.html')
+
+def product_view(request, product_slug):
+    product = Product.objects.get(slug=product_slug)
+    attachments = ProductAttachment.objects.filter(publication=product)
+    print(len(attachments))
+    return render(request, 'product.html', {'product': product, 'attachments': attachments[0:], 'fa': attachments[0]})
 
 def custom_logout(request):
     logout(request)
